@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
-import convertRupiah from 'rupiah-format';
-import { useQuery, useMutation } from 'react-query';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
+import convertRupiah from "rupiah-format";
+import { useQuery, useMutation } from "react-query";
 
-import Navbar from '../components/Navbar';
+import Navbar from "../components/Navbar";
 
-import dataProduct from '../fakeData/product';
+import dataProduct from "../fakeData/product";
 
-import { API } from '../config/api';
+import { API } from "../config/api";
 
 export default function DetailProduct() {
   let navigate = useNavigate();
   let { id } = useParams();
 
-  let { data: product } = useQuery('productDetailCache', async () => {
-    const response = await API.get('/product/' + id);
+  let { data: product } = useQuery("productDetailCache", async () => {
+    const response = await API.get("/product/" + id);
     return response.data.data;
   });
 
@@ -25,7 +25,7 @@ export default function DetailProduct() {
 
       const config = {
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
       };
 
@@ -37,9 +37,9 @@ export default function DetailProduct() {
 
       const body = JSON.stringify(data);
 
-      const response = await API.post('/transaction', body, config);
-      console.log("transaction success :", response)
-      navigate('/profile');
+      const response = await API.post("/transaction", body, config);
+      console.log("transaction success :", response);
+      navigate("/profile");
     } catch (error) {
       console.log("transaction failed : ", error);
     }
