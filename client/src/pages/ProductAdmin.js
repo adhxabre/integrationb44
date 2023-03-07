@@ -1,33 +1,68 @@
-import React from 'react';
-import { Button, Col, Container, Row, Table } from 'react-bootstrap';
-import { useNavigate } from 'react-router';
+import React, { useState, useEffect } from "react";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
-import ShowMoreText from 'react-show-more-text';
-import rupiahFormat from 'rupiah-format';
+import ShowMoreText from "react-show-more-text";
+import rupiahFormat from "rupiah-format";
 
-import DeleteData from '../components/modal/DeleteData';
-import NavbarAdmin from '../components/NavbarAdmin';
+import DeleteData from "../components/modal/DeleteData";
+import NavbarAdmin from "../components/NavbarAdmin";
 
-import imgEmpty from '../assets/empty.svg';
+import imgEmpty from "../assets/empty.svg";
+
+import { useQuery, useMutation } from "react-query";
+import { API } from "../config/api";
 
 export default function ProductAdmin() {
   let navigate = useNavigate();
 
-  const title = 'Product admin';
-  document.title = 'DumbMerch | ' + title;
+  const title = "Product admin";
+  document.title = "DumbMerch | " + title;
 
-  let { data: products, refetch } = useQuery('productsAdminCache', async () => {
-    const response = await API.get('/products');
+  const [idDelete, setIdDelete] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const handleDelete = (id) => {
+    setIdDelete(id);
+    handleShow();
+  };
+
+  let { data: products, refetch } = useQuery("productsAdminCache", async () => {
+    const response = await API.get("/products");
     return response.data.data;
   });
 
+  // If confirm is true, execute delete data
+  const deleteById = useMutation(async (id) => {
+    try {
+      await API.delete(`/product/${id}`);
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   const addProduct = () => {
-    navigate('/add-product');
+    navigate("/add-product");
   };
 
   const handleUpdate = (id) => {
-    navigate('/update-product/' + id);
+    navigate("/update-product/" + id);
   };
+
+  useEffect(() => {
+    if (confirmDelete) {
+      // Close modal confirm delete data
+      handleClose();
+      // execute delete data by id function
+      deleteById.mutate(idDelete);
+      setConfirmDelete(null);
+    }
+  }, [confirmDelete]);
 
   return (
     <>
@@ -42,7 +77,7 @@ export default function ProductAdmin() {
             <Button
               onClick={addProduct}
               className="btn-dark"
-              style={{ width: '100px' }}
+              style={{ width: "100px" }}
             >
               Add
             </Button>
@@ -71,9 +106,9 @@ export default function ProductAdmin() {
                         <img
                           src={item.image}
                           style={{
-                            width: '80px',
-                            height: '80px',
-                            objectFit: 'cover',
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "cover",
                           }}
                           alt={item.name}
                         />
@@ -103,7 +138,7 @@ export default function ProductAdmin() {
                             handleUpdate(item.id);
                           }}
                           className="btn-sm btn-success me-2"
-                          style={{ width: '135px' }}
+                          style={{ width: "135px" }}
                         >
                           Edit
                         </Button>
@@ -112,7 +147,7 @@ export default function ProductAdmin() {
                             handleDelete(item.id);
                           }}
                           className="btn-sm btn-danger"
-                          style={{ width: '135px' }}
+                          style={{ width: "135px" }}
                         >
                           Delete
                         </Button>
@@ -126,7 +161,7 @@ export default function ProductAdmin() {
                 <img
                   src={imgEmpty}
                   className="img-fluid"
-                  style={{ width: '40%' }}
+                  style={{ width: "40%" }}
                   alt="empty"
                 />
                 <div className="mt-3">No data product</div>
