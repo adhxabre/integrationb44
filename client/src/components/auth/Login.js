@@ -1,23 +1,23 @@
-import { useContext, useState } from 'react';
-import { Alert } from 'react-bootstrap';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/userContext';
+import { useContext, useState } from "react";
+import { Alert } from "react-bootstrap";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/userContext";
 
-import { API, setAuthToken } from '../../config/api';
+import { API, setAuthToken } from "../../config/api";
 
 export default function Login() {
   let navigate = useNavigate();
 
-  const title = 'Login';
-  document.title = 'DumbMerch | ' + title;
+  const title = "Login";
+  document.title = "DumbMerch | " + title;
 
   const [_, dispatch] = useContext(UserContext);
 
   const [message, setMessage] = useState(null);
   const [form, setForm] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const { email, password } = form;
@@ -34,23 +34,23 @@ export default function Login() {
       e.preventDefault();
 
       // Insert data for login process, you can also make this without any configuration, because axios would automatically handling it.
-      const response = await API.post('/login', form);
+      const response = await API.post("/login", form);
 
       console.log("login success : ", response);
 
       // Send data to useContext
       dispatch({
-        type: 'LOGIN_SUCCESS',
+        type: "LOGIN_SUCCESS",
         payload: response.data.data,
       });
 
       setAuthToken(localStorage.token);
 
       // Status check
-      if (response.data.data.role === 'admin') {
-        navigate('/complain-admin');
+      if (response.data.data.role === "admin") {
+        navigate("/complain-admin");
       } else {
-        navigate('/');
+        navigate("/");
       }
 
       const alert = (
@@ -74,7 +74,7 @@ export default function Login() {
     <div className="d-flex justify-content-center">
       <div className="card-auth p-4">
         <div
-          style={{ fontSize: '36px', lineHeight: '49px', fontWeight: '700' }}
+          style={{ fontSize: "36px", lineHeight: "49px", fontWeight: "700" }}
           className="mb-3"
         >
           Login
