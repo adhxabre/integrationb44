@@ -1,16 +1,18 @@
-import { Col, Container, Row } from 'react-bootstrap';
-import Masonry from 'react-masonry-css';
+import { Col, Container, Row } from "react-bootstrap";
+import Masonry from "react-masonry-css";
 
-import ProductCard from '../components/card/ProductCard';
-import Navbar from '../components/Navbar';
+import ProductCard from "../components/card/ProductCard";
+import Navbar from "../components/Navbar";
 
-import imgEmpty from '../assets/empty.svg';
+import imgEmpty from "../assets/empty.svg";
 
 // API config
+import { useQuery } from "react-query";
+import { API } from "../config/api";
 
 export default function Product() {
-  const title = 'Shop';
-  document.title = 'DumbMerch | ' + title;
+  const title = "Shop";
+  document.title = "DumbMerch | " + title;
 
   const breakpointColumnsObj = {
     default: 6,
@@ -18,6 +20,11 @@ export default function Product() {
     700: 3,
     500: 2,
   };
+
+  let { data: products } = useQuery("productsCache", async () => {
+    const response = await API.get("/products");
+    return response.data.data;
+  });
 
   return (
     <div>
@@ -45,7 +52,7 @@ export default function Product() {
                 <img
                   src={imgEmpty}
                   className="img-fluid"
-                  style={{ width: '40%' }}
+                  style={{ width: "40%" }}
                   alt="empty"
                 />
                 <div className="mt-3">No data product</div>
